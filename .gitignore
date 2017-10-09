@@ -1,4 +1,4 @@
 test-run
 .idea/
-elm/elm-stuff/
+*elm-stuff*
 
