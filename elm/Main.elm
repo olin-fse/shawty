@@ -44,7 +44,7 @@ update msg model =
             ({ model | userUrl = newContent }, Cmd.none)
 
         ShowUrl (Ok newUrl) ->
-            (Model model.generatedUrl newUrl, Cmd.none)
+            ({ model | generatedUrl = newUrl }, Cmd.none)
 
         ShowUrl (Err _) ->
             (model, Cmd.none)
@@ -63,12 +63,12 @@ shortenUrl url =
 encodeUserUrl : String -> Value
 encodeUserUrl url =
     object
-        [ ("userUrl", string url) 
+        [ ("Url", string url) 
         ]
             
 decodeGeneratedUrl : Decode.Decoder String
 decodeGeneratedUrl =
-    Decode.at ["data", "generated_url"] Decode.string
+    Decode.at ["Url"] Decode.string
 
 -- VIEW
 
@@ -76,8 +76,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ input [ placeholder "Url to shorten", onInput Change ] []
-        , div [] [ text (model.userUrl) ]
         , button [ onClick Shorten ] [ text "Shorten Url" ]
+        , div [] [ text (model.generatedUrl) ]
         ]
 
 
