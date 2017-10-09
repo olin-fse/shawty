@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 )
 
-type requestBody struct {
-	UserUrl string
+type UrlJson struct {
+	Url string
 }
 
 func main() {
@@ -30,11 +30,14 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func generate(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
-	var body requestBody
-	err := decoder.Decode(&body)
+	var requestJson UrlJson
+	err := decoder.Decode(&requestJson)
 	if err != nil {
 		panic(err)
 	}
 	defer req.Body.Close()
-	fmt.Println(body.UserUrl)
+	fmt.Println(requestJson.Url)
+
+	responseJson := UrlJson{Url: "http://localhost:8080/a3B7Z4"}
+	json.NewEncoder(w).Encode(responseJson)
 }
