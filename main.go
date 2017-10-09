@@ -56,8 +56,6 @@ func generate(w http.ResponseWriter, req *http.Request) {
 	}
 	defer req.Body.Close()
 
-	fmt.Println(requestJson.Url)
-
 	// TODO Validate the url they provide...or not
 	mapping := randSeq(5)
 	stmt, err := db.Prepare("INSERT INTO mappings (original_url, shortened_url) VALUES(?, ?)")
@@ -84,7 +82,6 @@ func findMapping(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 - Could not find this mapping"))
 	} else {
-		fmt.Println(originalUrl)
 		http.Redirect(w, req, originalUrl, 301)
 	}
 }

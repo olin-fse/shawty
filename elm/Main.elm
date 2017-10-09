@@ -75,11 +75,15 @@ decodeGeneratedUrl =
 view : Model -> Html Msg
 view model =
     div []
-        [ input [ placeholder "Url to shorten", onInput Change ] []
+        [ input [ placeholder "Url to shorten", onInput Change, inputStyle ] []
         , button [ onClick Shorten ] [ text "Shorten Url" ]
         , div [] [ text (model.generatedUrl) ]
         ]
 
+inputStyle =
+    style
+    [ ("width", "300px")
+    ]
 
 -- SUBSCRIPTIONS
 
