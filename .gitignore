@@ -1,6 +1,9 @@
 test-run
 .idea/
 *elm-stuff*
+*.DS_Store*
+elm/dist
+elm/node_modules
 
 index.html
 

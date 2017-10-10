@@ -1,10 +1,8 @@
 package main
 
 import (
-	"html/template"
 	"fmt"
 	"net/http"
-	"path/filepath"
 	"encoding/json"
 	"database/sql"
 	"math/rand"
@@ -29,7 +27,8 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.Handle("/", http.FileServer(http.Dir("./elm/static")))
+	r.Handle("/", http.FileServer(http.Dir("./elm/dist")))
+	r.Handle("/{jsFile:[a-z]+.js}", http.FileServer(http.Dir("./elm/dist")))
 	r.HandleFunc("/generate", generate)
 	r.HandleFunc("/{mapping:[a-zA-Z0-9]{5}}", findMapping)
 
@@ -37,14 +36,6 @@ func main() {
 
 	fmt.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
-}
-
-func index(w http.ResponseWriter, r *http.Request) {
-	lp := filepath.Join("elm", "static")
-	fp := filepath.Join("templates", "/index.html")
-
-	tmpl, _ := template.ParseFiles(lp, fp)
-	tmpl.ExecuteTemplate(w, "layout", nil)
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
@@ -87,9 +78,9 @@ func findMapping(w http.ResponseWriter, req *http.Request) {
 }
 
 func randSeq(n int) string {
-    b := make([]rune, n)
-    for i := range b {
-        b[i] = chars[rand.Intn(len(chars))]
-    }
-    return string(b)
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(b)
 }
