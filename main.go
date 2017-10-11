@@ -4,37 +4,31 @@ import (
 	"fmt"
 	"net/http"
 	"encoding/json"
-	"database/sql"
 	"math/rand"
 	"time"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"./service"
+	"./utils"
 )
 
 type UrlJson struct {
 	Url string
 }
 
-var db *sql.DB = nil
-var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	db, _ = sql.Open("mysql",
-		"url:password@tcp(127.0.0.1:3306)/urlshortener")
+	db := service.InitDB()
 	defer db.Close()
 
 	r := mux.NewRouter()
-
 	r.Handle("/", http.FileServer(http.Dir("./elm/dist")))
 	r.Handle("/{jsFile:[a-z]+.js}", http.FileServer(http.Dir("./elm/dist")))
 	r.HandleFunc("/generate", generate)
-	r.HandleFunc("/{mapping:[a-zA-Z0-9]{5}}", findMapping)
+	r.HandleFunc("/{code:[a-zA-Z0-9]{5}}", redirectToUrl)
 
 	http.Handle("/", r)
-
-	fmt.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -48,39 +42,26 @@ func generate(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 
 	// TODO Validate the url they provide...or not
-	mapping := randSeq(5)
-	stmt, err := db.Prepare("INSERT INTO mappings (original_url, shortened_url) VALUES(?, ?)")
-	if (err != nil) {
-		fmt.Println(err)
-	}
+	generatedCode := utils.RandSeq(5)
+	success := service.CreateMapping(requestJson.Url, generatedCode)
 
-	_, err = stmt.Exec(requestJson.Url, mapping)
-	if (err != nil) {
-		fmt.Println(err)
+	if (success) {
+		responseJson := UrlJson{Url: "localhost:8080/" + generatedCode}
+		json.NewEncoder(w).Encode(responseJson)
 	}
-
-	responseJson := UrlJson{Url: "localhost:8080/" + mapping}
-	json.NewEncoder(w).Encode(responseJson)
 }
 
-func findMapping(w http.ResponseWriter, req *http.Request) {
+func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	mapping := vars["mapping"]
+	code := vars["code"]
 
-	var originalUrl string
-	err := db.QueryRow("SELECT original_url FROM mappings WHERE shortened_url = ?", mapping).Scan(&originalUrl)
+	url, err := service.GetUrlForCode(code)
+	
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("404 - Could not find this mapping"))
+		w.Write([]byte("404 - Could not find this code"))
 	} else {
-		http.Redirect(w, req, originalUrl, 301)
+		http.Redirect(w, req, url, 301)
 	}
 }
 
-func randSeq(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = chars[rand.Intn(len(chars))]
-	}
-	return string(b)
-}
