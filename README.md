@@ -11,8 +11,8 @@ export GOPATH=$HOME/go
 ```
 mkdir -p ~/go/src/github.com/olin-fse
 cd !$
-git clone https://github.com/olin-fse/test-run
-cd test-run
+git clone https://github.com/olin-fse/shawty
+cd shawty
 ```
 
 - Install dependencies from root directory:
@@ -26,7 +26,7 @@ npm install
 
 - Install MYSQL, then start it (if not the app will not work)
 
-- Build React code from `test-run/frontend`:
+- Build React code from `shawty/frontend`:
 
 ```
 npm run build
