@@ -1,0 +1,20 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "babel-preset-env": "1.6.0",
+    "babel-preset-react": "6.24.1",
+    "babel-preset-stage-2": "6.24.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-scripts": "1.0.17",
+    "webpack": "3.7.1"
+  },
+  "scripts": {
+    "watch": "webpack -d --config webpack.js --watch",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

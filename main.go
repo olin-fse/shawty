@@ -23,8 +23,8 @@ func main() {
 	defer db.Close()
 
 	r := mux.NewRouter()
-	r.Handle("/", http.FileServer(http.Dir("./elm/dist")))
-	r.Handle("/{jsFile:[a-z]+.js}", http.FileServer(http.Dir("./elm/dist")))
+	r.Handle("/", http.FileServer(http.Dir("./frontend/public")))
+	r.Handle("/{jsFile:[a-z]+.js}", http.FileServer(http.Dir("./frontend/public")))
 	r.HandleFunc("/generate", generate)
 	r.HandleFunc("/{code:[a-zA-Z0-9]{5}}", redirectToUrl)
 
