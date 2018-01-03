@@ -1,10 +1,5 @@
 const path = require('path');
 
-const PATHS = {
-    source: path.join(__dirname, '../src'),
-    output: path.join(__dirname, '../../../../target/classes/static')
-};
-
 module.exports = {
     devtool: 'eval',
     entry: [
