@@ -41,7 +41,6 @@ func generate(w http.ResponseWriter, req *http.Request) {
 	}
 	defer req.Body.Close()
 
-	// TODO Validate the url they provide...or not
 	generatedCode := utils.RandSeq(5)
 	success := service.CreateMapping(requestJson.Url, generatedCode)
 
