@@ -24,7 +24,7 @@ cd frontend/
 npm install
 ```
 
-- Install MYSQL, then start it (if not the app will not work)
+- Install MYSQL. Then create a user with the username `url` and password `password`. Start the MYSQL service.
 
 - Build React code from `shawty/frontend`:
 

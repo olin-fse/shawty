@@ -1,25 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"encoding/json"
 	"math/rand"
 	"time"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"./service"
-	"./utils"
 )
 
-type UrlJson struct {
-	Url string
-}
+const codeLength = 5
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	db := service.InitDB()
+	db := InitDB()
 	defer db.Close()
 
 	r := mux.NewRouter()
@@ -33,18 +28,11 @@ func main() {
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	var requestJson UrlJson
-	err := decoder.Decode(&requestJson)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer req.Body.Close()
+	url := DecodeJsonForUrl(req)
+	generatedCode := RandSeq(codeLength)
+	success := CreateMapping(url, generatedCode)
 
-	generatedCode := utils.RandSeq(5)
-	success := service.CreateMapping(requestJson.Url, generatedCode)
-
-	if (success) {
+	if success {
 		responseJson := UrlJson{Url: "localhost:8080/" + generatedCode}
 		json.NewEncoder(w).Encode(responseJson)
 	}
@@ -54,7 +42,7 @@ func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	code := vars["code"]
 
-	url, err := service.GetUrlForCode(code)
+	url, err := GetUrlForCode(code)
 	
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
