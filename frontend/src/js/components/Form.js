@@ -1,18 +1,10 @@
 import React, {Component} from 'react';
-import request from 'superagent';
+import * as api from '../api';
 
 class Form extends Component {
   shortenUrl = (e) => {
     e.preventDefault();
-
-    request.post('/generate')
-      .send({Url: this.refs.url.value})
-      .end((err, res) => {
-        if (err) return alert(err);
-
-        const payload = JSON.parse(res.text);
-        this.props.setUrl(payload.Url);
-      });
+    api.generateCode(this.refs.url.value, this.props.setUrl);
   };
 
   render() {
