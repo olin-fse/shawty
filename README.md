@@ -35,6 +35,12 @@ mysql> CREATE DATABASE urlshortener;
 mysql> SHOW databases; // verify new db is there
 mysql> CREATE USER 'url'@'localhost' IDENTIFIED BY 'password';
 mysql> GRANT ALL PRIVILEGES ON urlshortener . * TO ‘url’@'localhost’;
+mysql> CREATE TABLE `mappings` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `original_url` varchar(300) NOT NULL,
+  `shortened_url` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 ```
 
 At this point, you should have your MySQL database and user set up for Shawty to use.
