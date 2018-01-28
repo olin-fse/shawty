@@ -1,21 +1,24 @@
-import { assert } from 'chai';
-import rewiremock from 'rewiremock';
+import request from 'superagent';
 
-import * as exports from 'superagent';
 import * as UnitUnderTest from '../src/js/api';
 
-rewiremock.around(() => import('superagent')).then(mockedModule => ({
-  post: {
-    send: () => ({
-      end: (cb) => {
-        cb(null, JSON.stringify({Url: 'localhost:8080/eZ8dK'}));
-      }
-    })
-  }
-}));
+test('api', () => {
+  const urlCode = "abcde";
+  const spy = jest.spyOn(request, 'post').mockImplementation(() => (
+    {
+      send: () => ({
+        end: (cb) => {
+          return cb(null, { text: JSON.stringify({ Url: urlCode }) });
+        }
+      })
+    }
+  ));
 
-describe('api', () => {
-  it('calls post', () => {
-    UnitUnderTest.generateCode('https://google.com');
+  UnitUnderTest.generateCode('https://google.com', (code) => {
+    expect(spy).toHaveBeenCalled();
+    expect(code).toBe(urlCode);
   });
+
+  spy.mockReset();
+  spy.mockRestore();
 });
