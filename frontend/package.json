@@ -8,7 +8,6 @@
     "babel-preset-stage-2": "6.24.1",
     "react": "16.2.0",
     "react-dom": "16.2.0",
-    "react-scripts": "1.0.17",
     "superagent": "3.8.2",
     "webpack": "3.7.1"
   },
