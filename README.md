@@ -1,39 +1,25 @@
-# How to set up this project
+# Week 1 - Unit Testing
 
-- Add this line to your `~/.bashrc` (Linux) or `~/.bash_profile` (Mac):
+## Golang
 
-```
-export GOPATH=$HOME/go
-```
-
-- Clone this repository:
+To run Go tests:
 
 ```
-mkdir -p ~/go/src/github.com/olin-fse
-cd !$
-git clone https://github.com/olin-fse/shawty
-cd shawty
-```
-
-- Install dependencies from root directory:
-
-```
+cd ~/go/src/github.com/olin-fse/shawty
 go get ./...
+ginkgo
+```
 
-cd frontend/
+The Go test file is `main_test.go`
+
+## Javascript
+
+To run Jest tests:
+
+```
+cd ~/go/src/github.com/olin-fse/frontend
 npm install
+npm test
 ```
 
-- Install MYSQL. Then create a user with the username `url` and password `password`. Start the MYSQL service.
-
-- Build React code from `shawty/frontend`:
-
-```
-npm run build
-```
-
-- Run server from root directory:
-
-```
-go run main.go
-```
+The Jest test file is `test/api.spec.js`
