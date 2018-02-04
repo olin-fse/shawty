@@ -32,7 +32,7 @@ func main() {
 	handler := c.Handler(r)
 
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":8000", handler))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
