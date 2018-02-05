@@ -36,13 +36,12 @@ func main() {
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("generate")
 	url := DecodeJsonForUrl(req)
 	generatedCode := RandSeq(codeLength)
 	success := CreateMapping(url, generatedCode)
 
 	if success {
-		responseJson := UrlJson{Url: "localhost:8080/" + generatedCode}
+		responseJson := CodeJson{Code: generatedCode}
 		json.NewEncoder(w).Encode(responseJson)
 	}
 }
