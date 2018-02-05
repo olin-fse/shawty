@@ -97,3 +97,20 @@ cd ..
 ```
 go run *.go
 ```
+
+## Tests
+
+Javascript:
+
+```
+cd frontend/
+npm install
+npm test
+```
+
+Go:
+
+```
+go get ./...
+ginkgo
+```

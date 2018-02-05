@@ -13,6 +13,10 @@ type UrlJson struct {
 	Url string
 }
 
+type CodeJson struct {
+	Code string
+}
+
 func RandSeq(n int) string {
 	b := make([]rune, n)
 	for i := range b {

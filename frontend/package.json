@@ -6,13 +6,20 @@
     "babel-preset-env": "1.6.0",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-2": "6.24.1",
+    "express": "4.16.2",
+    "path": "0.12.7",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "superagent": "3.8.2",
     "webpack": "3.7.1"
   },
   "scripts": {
+    "start": "nodemon index.js",
     "watch": "webpack -d --config webpack.js --watch",
-    "build": "webpack -p --config webpack.js"
+    "build": "webpack -p --config webpack.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "22.1.4"
   }
 }

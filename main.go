@@ -1,12 +1,15 @@
 package main
 
 import (
-	"net/http"
 	"encoding/json"
-	"math/rand"
-	"time"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	"log"
+	"math/rand"
+	"net/http"
+	"time"
 )
 
 const codeLength = 5
@@ -18,13 +21,18 @@ func main() {
 	defer db.Close()
 
 	r := mux.NewRouter()
-	r.Handle("/", http.FileServer(http.Dir("./frontend/public")))
-	r.Handle("/{jsFile:[a-z]+.js}", http.FileServer(http.Dir("./frontend/public")))
 	r.HandleFunc("/generate", generate)
 	r.HandleFunc("/{code:[a-zA-Z0-9]{5}}", redirectToUrl)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(r)
+
 	http.Handle("/", r)
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
@@ -33,7 +41,7 @@ func generate(w http.ResponseWriter, req *http.Request) {
 	success := CreateMapping(url, generatedCode)
 
 	if success {
-		responseJson := UrlJson{Url: "localhost:8080/" + generatedCode}
+		responseJson := CodeJson{Code: generatedCode}
 		json.NewEncoder(w).Encode(responseJson)
 	}
 }
@@ -43,7 +51,7 @@ func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 	code := vars["code"]
 
 	url, err := GetUrlForCode(code)
-	
+
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 - Could not find this code"))
@@ -51,4 +59,3 @@ func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, url, 301)
 	}
 }
-

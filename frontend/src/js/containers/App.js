@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import Form from '../components/Form';
 import '../../css/App.css';
+import getConfig from '../../../config';
+
+const config = getConfig(process.env.NODE_ENV);
 
 class App extends Component {
   constructor(props) {
@@ -12,8 +15,8 @@ class App extends Component {
     };
   }
 
-  setUrl = (shortenedUrl) => {
-    this.setState({ shortenedUrl });
+  setUrl = (code) => {
+    this.setState({ shortenedUrl: `${config.staticEndpoint}/${code}` });
   };
 
   render() {
