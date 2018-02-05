@@ -1,7 +1,7 @@
 const getConfig = (env) => {
   if (env !== 'production') {
     return {
-      apiEndpoint: 'localhost:8080'
+      apiEndpoint: 'http://localhost:8080'
     };
   }
 };
