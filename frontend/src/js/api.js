@@ -3,10 +3,10 @@ import getConfig from '../../config';
 
 const config = getConfig(process.env.NODE_ENV);
 
-export const generateCode = (url, cb) => {
+export const generateCode = (url, singleUse, cb) => {
   request.post(`${config.apiEndpoint}/generate`)
     .withCredentials()
-    .send({Url: url})
+    .send({Url: url, SingleUse: singleUse})
     .end((err, res) => {
       if (err) return alert(err);
 

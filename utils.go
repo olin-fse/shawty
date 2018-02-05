@@ -9,8 +9,9 @@ import (
 
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-type UrlJson struct {
+type CreateCodeRequestJson struct {
 	Url string
+	SingleUse bool
 }
 
 type CodeJson struct {
@@ -25,13 +26,13 @@ func RandSeq(n int) string {
 	return string(b)
 }
 
-func DecodeJsonForUrl(req *http.Request) string {
+func DecodeJsonForUrl(req *http.Request) CreateCodeRequestJson {
 	decoder := json.NewDecoder(req.Body)
-	var requestJson UrlJson
+	var requestJson CreateCodeRequestJson
 	err := decoder.Decode(&requestJson)
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer req.Body.Close()
-	return requestJson.Url
+	return requestJson
 }

@@ -7,9 +7,17 @@ import (
 
 const (
 	DRIVER = "url:password@tcp(127.0.0.1:3306)/urlshortener"
-	CREATE_MAPPING = "INSERT INTO mappings (original_url, shortened_url) VALUES(?, ?)"
-	FIND_MAPPING = "SELECT original_url FROM mappings WHERE shortened_url = ?"
+	CREATE_MAPPING = "INSERT INTO mappings (original_url, shortened_url, single_use, expired) VALUES(?, ?, ?, ?)"
+	FIND_MAPPING = "SELECT (id, original_url, single_use, expired) FROM mappings WHERE shortened_url = ?"
+	EXPIRE_MAPPING = "UPDATE mappings SET expired = ? WHERE id = ?"
 )
+
+type queryResponse struct {
+	Id int
+	OriginalUrl string
+	SingleUse int
+	Expired int
+}
 
 var db *sql.DB = nil
 
@@ -19,15 +27,15 @@ func InitDB() *sql.DB {
 	return db
 }
 
-func CreateMapping(url, code string) bool {
+func CreateMapping(url, code string, singleUse bool) bool {
 	stmt, err := db.Prepare(CREATE_MAPPING)
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 		return false
 	}
 
-	_, err = stmt.Exec(url, code)
-	if (err != nil) {
+	_, err = stmt.Exec(url, code, singleUse, false)
+	if err != nil {
 		fmt.Println(err)
 		return false
 	}
@@ -36,8 +44,27 @@ func CreateMapping(url, code string) bool {
 }
 
 func GetUrlForCode(code string) (string, error) {
-	var url string
-	err := db.QueryRow(FIND_MAPPING, code).Scan(&url)
+	var res queryResponse
+	err := db.QueryRow(FIND_MAPPING, code).Scan(&res)
+	fmt.Println(res)
 
-	return url, err
+	if res.SingleUse == 1 {
+		if res.Expired == 1 {
+			fmt.Println("expired")
+			return "", fmt.Errorf("%s has already expired", code)
+		} else {
+			fmt.Println("will expire")
+			stmt, err := db.Prepare(EXPIRE_MAPPING)
+			if err != nil {
+				fmt.Println(err)
+				return "", err
+			}
+
+			_, err = stmt.Exec(1, res.Id)
+			return res.OriginalUrl, nil
+		}
+	}
+
+	fmt.Println("no problem")
+	return res.OriginalUrl, err
 }

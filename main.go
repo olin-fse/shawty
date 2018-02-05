@@ -36,9 +36,9 @@ func main() {
 }
 
 func generate(w http.ResponseWriter, req *http.Request) {
-	url := DecodeJsonForUrl(req)
+	requestJson := DecodeJsonForUrl(req)
 	generatedCode := RandSeq(codeLength)
-	success := CreateMapping(url, generatedCode)
+	success := CreateMapping(requestJson.Url, generatedCode, requestJson.SingleUse)
 
 	if success {
 		responseJson := CodeJson{Code: generatedCode}
