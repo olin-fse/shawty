@@ -52,10 +52,8 @@ func GetUrlForCode(code string) (string, error) {
 
 	if res.singleUse == 1 {
 		if res.expired == 1 {
-			fmt.Println("expired")
 			return "", fmt.Errorf("%s has already expired", code)
 		} else {
-			fmt.Println("will expire")
 			stmt, err := db.Prepare(EXPIREMAPPING)
 			if err != nil {
 				fmt.Println(err)
