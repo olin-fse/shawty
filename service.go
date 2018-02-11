@@ -6,17 +6,17 @@ import (
 )
 
 const (
-	DRIVER = "url:password@tcp(127.0.0.1:3306)/urlshortener"
-	CREATE_MAPPING = "INSERT INTO mappings (original_url, shortened_url, single_use, expired) VALUES(?, ?, ?, ?)"
-	FIND_MAPPING = "SELECT (id, original_url, single_use, expired) FROM mappings WHERE shortened_url = ?"
-	EXPIRE_MAPPING = "UPDATE mappings SET expired = ? WHERE id = ?"
+	DRIVER        = "url:password@tcp(127.0.0.1:3306)/urlshortener"
+	CREATEMAPPING = "INSERT INTO mappings (original_url, shortened_url, single_use, expired) VALUES(?, ?, ?, ?)"
+	FINDMAPPING   = "SELECT id, original_url, single_use, expired FROM mappings WHERE shortened_url = ?"
+	EXPIREMAPPING = "UPDATE mappings SET expired = ? WHERE id = ?"
 )
 
 type queryResponse struct {
-	Id int
-	OriginalUrl string
-	SingleUse int
-	Expired int
+	id          int
+	originalUrl string
+	singleUse   int
+	expired     int
 }
 
 var db *sql.DB = nil
@@ -28,7 +28,7 @@ func InitDB() *sql.DB {
 }
 
 func CreateMapping(url, code string, singleUse bool) bool {
-	stmt, err := db.Prepare(CREATE_MAPPING)
+	stmt, err := db.Prepare(CREATEMAPPING)
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -45,26 +45,27 @@ func CreateMapping(url, code string, singleUse bool) bool {
 
 func GetUrlForCode(code string) (string, error) {
 	var res queryResponse
-	err := db.QueryRow(FIND_MAPPING, code).Scan(&res)
-	fmt.Println(res)
+	err := db.QueryRow(FINDMAPPING, code).Scan(&res.id, &res.originalUrl, &res.singleUse, &res.expired)
+	if err != nil {
+		return "", fmt.Errorf("%s was not found", code)
+	}
 
-	if res.SingleUse == 1 {
-		if res.Expired == 1 {
+	if res.singleUse == 1 {
+		if res.expired == 1 {
 			fmt.Println("expired")
 			return "", fmt.Errorf("%s has already expired", code)
 		} else {
 			fmt.Println("will expire")
-			stmt, err := db.Prepare(EXPIRE_MAPPING)
+			stmt, err := db.Prepare(EXPIREMAPPING)
 			if err != nil {
 				fmt.Println(err)
 				return "", err
 			}
 
-			_, err = stmt.Exec(1, res.Id)
-			return res.OriginalUrl, nil
+			_, err = stmt.Exec(1, res.id)
+			return res.originalUrl, nil
 		}
 	}
 
-	fmt.Println("no problem")
-	return res.OriginalUrl, err
+	return res.originalUrl, nil
 }
