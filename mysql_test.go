@@ -10,11 +10,11 @@ func newTestStore() *StoreStruct {
 	// Connect to the database
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/?parseTime=true",
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		os.Getenv("TEST_DB_USERNAME"),
+		os.Getenv("TEST_DB_PASSWORD"),
+		os.Getenv("TEST_DB_HOST"),
+		os.Getenv("TEST_DB_PORT"),
+		os.Getenv("TEST_DB_NAME"),
 	)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
