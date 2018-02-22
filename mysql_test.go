@@ -9,13 +9,14 @@ import (
 func newTestStore() *StoreStruct {
 	// Connect to the database
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/?parseTime=true",
+		"%s:%s@tcp(%s:%s)/%s",
 		os.Getenv("TEST_DB_USERNAME"),
 		os.Getenv("TEST_DB_PASSWORD"),
 		os.Getenv("TEST_DB_HOST"),
 		os.Getenv("TEST_DB_PORT"),
 		os.Getenv("TEST_DB_NAME"),
 	)
+
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)

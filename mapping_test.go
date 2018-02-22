@@ -1,16 +1,27 @@
 package main
 
 import (
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"testing"
 )
 
-func CreateItem(t *testing.T) {
-	s := newTestStore()
-	defer s.Close()
+//func TestCart(t *testing.T) {
+//	RegisterFailHandler(Fail)
+//	RunSpecs(t, "Test Suite")
+//}
 
-	// Insert an item
-	_, err := s.CreateMapping("http://test.com", "test", false)
-	if err != nil {
-		t.Fatal(err)
-	}
+var _ = Describe("Insert Mapping", func() {
+	It("inserts a valid mapping entry", func() {
+		s := newTestStore()
+		defer s.Close()
+
+		// Insert an item
+		_, err := s.CreateMapping("http://test.com", "test", false)
+		Expect(err).To(BeNil())
+	})
+})
+
+func TestCreateItem(t *testing.T) {
+
 }
