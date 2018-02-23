@@ -10,6 +10,7 @@ import (
 	"strings"
 	"log"
 	"os"
+	"encoding/json"
 )
 
 var (
@@ -18,6 +19,10 @@ var (
 	generateUrl string
 	healthUrl   string
 )
+
+type JsonCodeResponse struct {
+	Code string `json:"code"`
+}
 
 func init() {
 	connectToDb(&MySqlConfig{
@@ -32,46 +37,62 @@ func init() {
 	healthUrl = fmt.Sprintf("%s/healthz", server.URL)
 }
 
+func makeGenerateRequest(url string, singleUse bool) *http.Response {
+	reqJson := fmt.Sprintf(`{"url": "%s", "singleUse": %t}`, url, singleUse)
+	reader = strings.NewReader(reqJson)
+
+	req, err := http.NewRequest("POST", generateUrl, reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return res
+}
+
+func makeCodeRequest(code string) *http.Response {
+	url := fmt.Sprintf("%s/%s", server.URL, code)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return res
+}
+
 var _ = Describe("Test API Endpoints", func() {
 	It("generates a new mapping when POST /generate is hit", func() {
-		json := `{"url": "https://google.com", "singleUse": false}`
-		reader = strings.NewReader(json)
-
-		request, err := http.NewRequest("POST", generateUrl, reader)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		res, err := http.DefaultClient.Do(request)
-		if err != nil {
-			log.Fatal(err)
-		}
-
+		res := makeGenerateRequest("https://google.com", false)
 		Expect(res.StatusCode).To(Equal(200))
 	})
 
 	It("returns 400 if no url is provided", func() {
-		json := `{"url": "", "singleUse": false}`
-		reader = strings.NewReader(json)
-
-		request, err := http.NewRequest("POST", generateUrl, reader)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		res, err := http.DefaultClient.Do(request)
-		if err != nil {
-			log.Fatal(err)
-		}
-
+		res := makeGenerateRequest("", false)
 		Expect(res.StatusCode).To(Equal(400))
 	})
 
-	It("returns 200 on GET /ping", func() {
-		request, _ := http.NewRequest("GET", healthUrl, nil)
-
-		res, _ := http.DefaultClient.Do(request)
-
+	It("singleUse flow", func() {
+		res := makeGenerateRequest("https://google.com", true)
 		Expect(res.StatusCode).To(Equal(200))
+
+		var resJson JsonCodeResponse
+		defer res.Body.Close()
+		json.NewDecoder(res.Body).Decode(&resJson)
+
+		// First use
+		makeCodeRequest(resJson.Code)
+
+		// Second use
+		res = makeCodeRequest(resJson.Code)
+		Expect(res.StatusCode).To(Equal(http.StatusNotFound))
 	})
 })

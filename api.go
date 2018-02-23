@@ -12,10 +12,12 @@ func generateMapping(w http.ResponseWriter, req *http.Request) {
 	requestJson := DecodeJsonForUrl(req)
 	generatedCode := RandSeq(codeLength)
 
-	if len(requestJson.Url) == 0 {
+	if len(requestJson.Url) == 0 ||
+		(requestJson.SingleUse != true && requestJson.SingleUse != false) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	success, _ := s.CreateMapping(requestJson.Url, generatedCode, requestJson.SingleUse)
 
 	if success {
