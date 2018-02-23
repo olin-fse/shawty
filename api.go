@@ -38,15 +38,15 @@ func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func ping(w http.ResponseWriter, req *http.Request) {
-	fmt.Printf("pong\n")
+func healthz(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("Health 200")
 }
 
 func Handlers() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/generate", generateMapping).Methods("POST")
 	r.HandleFunc("/{code:[a-zA-Z0-9]{5}}", redirectToUrl).Methods("GET")
-	r.HandleFunc("/ping", ping).Methods("GET")
+	r.HandleFunc("/healthz", healthz).Methods("GET")
 
 	return r
 }

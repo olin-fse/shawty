@@ -10,12 +10,12 @@ import (
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 type CreateCodeRequestJson struct {
-	Url string
-	SingleUse bool
+	Url string `json:"url"`
+	SingleUse bool `json:"singleUse"`
 }
 
 type CodeJson struct {
-	Code string
+	Code string `json:"code"`
 }
 
 func RandSeq(n int) string {

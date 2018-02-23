@@ -6,11 +6,6 @@ import (
 	"testing"
 )
 
-//func TestCart(t *testing.T) {
-//	RegisterFailHandler(Fail)
-//	RunSpecs(t, "Test Suite")
-//}
-
 var _ = Describe("Insert Mapping", func() {
 	It("inserts a valid mapping entry", func() {
 		s := newTestStore()

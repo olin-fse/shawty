@@ -1,58 +1,54 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	//"strings"
+	//"log"
+	"strings"
+	"log"
 )
 
 var (
 	server      *httptest.Server
 	reader      io.Reader
 	generateUrl string
-	pingUrl     string
+	healthUrl   string
 )
-
-//func TestCart(t *testing.T) {
-//	RegisterFailHandler(Fail)
-//	RunSpecs(t, "Test Suite")
-//}
 
 func init() {
 	server = httptest.NewServer(Handlers())
-	fmt.Println(server.URL)
 	generateUrl = fmt.Sprintf("%s/generate", server.URL)
-	pingUrl = fmt.Sprintf("%s/ping", server.URL)
+	healthUrl = fmt.Sprintf("%s/healthz", server.URL)
 }
 
 var _ = Describe("Test API Endpoints", func() {
 	It("generates a new mapping when POST /generate is hit", func() {
-		resp := httptest.NewRecorder()
+		json := `{"url": "https://google.com", "singleUse": false}`
+		reader = strings.NewReader(json) //Convert string to reader
 
-		request := httptest.NewRequest("POST", generateUrl, nil)
+		request, err := http.NewRequest("POST", generateUrl, reader)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		http.DefaultServeMux.ServeHTTP(resp, request)
+		res, err := http.DefaultClient.Do(request)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		Expect(resp.Result().StatusCode).To(Equal(200))
+		Expect(res.StatusCode).To(Equal(200))
 	})
 
-	FIt("returns 200 on GET /ping", func() {
-		fmt.Printf("%s\n", pingUrl)
-		resp := httptest.NewRecorder()
+	It("returns 200 on GET /ping", func() {
+		request, _ := http.NewRequest("GET", healthUrl, nil)
 
-		request := httptest.NewRequest("GET", pingUrl, nil)
+		res, _ := http.DefaultClient.Do(request)
 
-		http.DefaultServeMux.ServeHTTP(resp, request)
-
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(resp.Body)
-		newStr := buf.String()
-		fmt.Println("body", newStr)
-
-		Expect(resp.Result().StatusCode).To(Equal(200))
+		Expect(res.StatusCode).To(Equal(200))
 	})
 })
