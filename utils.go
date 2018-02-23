@@ -4,18 +4,18 @@ import (
 	"math/rand"
 	"net/http"
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 type CreateCodeRequestJson struct {
-	Url string
-	SingleUse bool
+	Url string `json:"url"`
+	SingleUse bool `json:"singleUse"`
 }
 
 type CodeJson struct {
-	Code string
+	Code string `json:"code"`
 }
 
 func RandSeq(n int) string {
@@ -31,7 +31,7 @@ func DecodeJsonForUrl(req *http.Request) CreateCodeRequestJson {
 	var requestJson CreateCodeRequestJson
 	err := decoder.Decode(&requestJson)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	defer req.Body.Close()
 	return requestJson

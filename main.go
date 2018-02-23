@@ -1,27 +1,31 @@
 package main
 
 import (
-	"encoding/json"
+	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 )
 
-const codeLength = 5
+var s Store
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	db := InitDB()
-	defer db.Close()
+	connectToDb(&MySqlConfig{
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	})
 
-	r := mux.NewRouter()
-	r.HandleFunc("/generate", generate)
-	r.HandleFunc("/{code:[a-zA-Z0-9]{5}}", redirectToUrl)
+	r := Handlers()
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -34,27 +38,30 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
-func generate(w http.ResponseWriter, req *http.Request) {
-	requestJson := DecodeJsonForUrl(req)
-	generatedCode := RandSeq(codeLength)
-	success := CreateMapping(requestJson.Url, generatedCode, requestJson.SingleUse)
+func connectToDb(config *MySqlConfig) {
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s",
+		config.username,
+		config.password,
+		config.host,
+		config.port,
+		config.database,
+	)
 
-	if success {
-		responseJson := CodeJson{Code: generatedCode}
-		json.NewEncoder(w).Encode(responseJson)
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		panic(err)
+	}
+
+	// Initialize our store
+	s, err = NewStore(db)
+	if err != nil {
+		panic(err)
 	}
 }
 
-func redirectToUrl(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	code := vars["code"]
-
-	url, err := GetUrlForCode(code)
-
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("404 - Could not find this code"))
-	} else {
-		http.Redirect(w, req, url, 301)
-	}
+type Store interface {
+	CreateMapping(url, code string, singleUse bool) (bool, error)
+	GetUrlForCode(code string) (string, error)
+	Close() error
 }
