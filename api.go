@@ -15,6 +15,7 @@ func generateMapping(w http.ResponseWriter, req *http.Request) {
 
 	if len(requestJson.Url) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	success, _ := s.CreateMapping(requestJson.Url, generatedCode, requestJson.SingleUse)
 

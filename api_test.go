@@ -27,9 +27,10 @@ func init() {
 }
 
 var _ = Describe("Test API Endpoints", func() {
+	// TODO Broken
 	It("generates a new mapping when POST /generate is hit", func() {
 		json := `{"url": "https://google.com", "singleUse": false}`
-		reader = strings.NewReader(json) //Convert string to reader
+		reader = strings.NewReader(json)
 
 		request, err := http.NewRequest("POST", generateUrl, reader)
 		if err != nil {
@@ -42,6 +43,23 @@ var _ = Describe("Test API Endpoints", func() {
 		}
 
 		Expect(res.StatusCode).To(Equal(200))
+	})
+
+	It("returns 400 if no url is provided", func() {
+		json := `{"url": "", "singleUse": false}`
+		reader = strings.NewReader(json)
+
+		request, err := http.NewRequest("POST", generateUrl, reader)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		res, err := http.DefaultClient.Do(request)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		Expect(res.StatusCode).To(Equal(400))
 	})
 
 	It("returns 200 on GET /ping", func() {
