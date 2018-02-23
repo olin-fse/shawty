@@ -17,26 +17,13 @@ var s Store
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	// Connect to database - dsn -> data store name
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s",
+	connectToDb(&MySqlConfig{
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
-	)
-
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		panic(err)
-	}
-
-	// Initialize our store
-	s, err = NewStore(db)
-	if err != nil {
-		panic(err)
-	}
+	})
 
 	r := Handlers()
 
@@ -49,6 +36,28 @@ func main() {
 
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", handler))
+}
+
+func connectToDb(config *MySqlConfig) {
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s",
+		config.username,
+		config.password,
+		config.host,
+		config.port,
+		config.database,
+	)
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		panic(err)
+	}
+
+	// Initialize our store
+	s, err = NewStore(db)
+	if err != nil {
+		panic(err)
+	}
 }
 
 type Store interface {

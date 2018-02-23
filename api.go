@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -40,7 +39,7 @@ func redirectToUrl(w http.ResponseWriter, req *http.Request) {
 }
 
 func healthz(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("Health 200")
+	w.WriteHeader(http.StatusOK)
 }
 
 func Handlers() *mux.Router {

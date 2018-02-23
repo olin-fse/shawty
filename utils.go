@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"net/http"
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -31,7 +31,7 @@ func DecodeJsonForUrl(req *http.Request) CreateCodeRequestJson {
 	var requestJson CreateCodeRequestJson
 	err := decoder.Decode(&requestJson)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	defer req.Body.Close()
 	return requestJson

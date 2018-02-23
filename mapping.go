@@ -30,11 +30,8 @@ func (s *StoreStruct) GetUrlForCode(code string) (string, error) {
 
 	if res.singleUse == 1 {
 		if res.expired == 1 {
-			fmt.Println("expired")
 			return "", fmt.Errorf("%s has already expired", code)
 		} else {
-			fmt.Println("will expire")
-
 			_, err = s.stmts[QueryExpireMapping].Exec(1, res.id)
 			return res.originalUrl, nil
 		}

@@ -15,6 +15,14 @@ type StoreStruct struct {
 	stmts map[string]*sql.Stmt
 }
 
+type MySqlConfig struct {
+	username string
+	password string
+	host     string
+	port     string
+	database string
+}
+
 // NewStore will prepare all of our queries on the provided
 // database and returns a pointer to a new `mysql.Store` instance.
 func NewStore(db *sql.DB) (*StoreStruct, error) {

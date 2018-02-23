@@ -7,10 +7,9 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	//"strings"
-	//"log"
 	"strings"
 	"log"
+	"os"
 )
 
 var (
@@ -21,13 +20,19 @@ var (
 )
 
 func init() {
+	connectToDb(&MySqlConfig{
+		os.Getenv("TEST_DB_USERNAME"),
+		os.Getenv("TEST_DB_PASSWORD"),
+		os.Getenv("TEST_DB_HOST"),
+		os.Getenv("TEST_DB_PORT"),
+		os.Getenv("TEST_DB_NAME"),
+	})
 	server = httptest.NewServer(Handlers())
 	generateUrl = fmt.Sprintf("%s/generate", server.URL)
 	healthUrl = fmt.Sprintf("%s/healthz", server.URL)
 }
 
 var _ = Describe("Test API Endpoints", func() {
-	// TODO Broken
 	It("generates a new mapping when POST /generate is hit", func() {
 		json := `{"url": "https://google.com", "singleUse": false}`
 		reader = strings.NewReader(json)
