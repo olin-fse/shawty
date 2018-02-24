@@ -11,11 +11,11 @@ describe('shawty', function() {
 
   it('renders app', async function() {
     const res = await browser.element('.App');
-    expect(res.state).to.equal('success');
+    expect(res).to.not.be.null;
   });
 
   it('submits link and receives code', async function() {
-    browser.setValue('input[type="uri"]', 'https://google.com');
+    browser.setValue('input[type="url"]', 'https://google.com');
     browser.click('input[type="submit"]');
     browser.waitForText('.App-result', 1000);
     const text = browser.getText('.App-result');

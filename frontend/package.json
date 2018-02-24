@@ -23,6 +23,8 @@
   },
   "devDependencies": {
     "jest": "22.1.4",
-    "wdio-jasmine-framework": "0.3.2"
+    "wdio-chromedriver-service": "0.1.2",
+    "wdio-jasmine-framework": "0.3.2",
+    "wdio-selenium-standalone-service": "0.0.9"
   }
 }
