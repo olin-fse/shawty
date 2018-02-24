@@ -13,11 +13,15 @@ describe('shawty', function() {
     expect(res).to.not.be.null;
   });
 
-  it('submits link and receives code', async function() {
+  it('app flow works', async function() {
     browser.setValue('input[type="url"]', 'https://google.com');
     browser.click('input[type="submit"]');
     browser.waitForText('.App-result', 1000);
-    const text = browser.getText('.App-result');
-    expect(text).to.have.length(config.staticEndpoint.length + 6);
+    const url = browser.getText('.App-result');
+    expect(url).to.have.length(config.staticEndpoint.length + 6);
+
+    browser.url(url);
+    const title = browser.getTitle();
+    expect(title).to.equal('Google');
   });
 });
