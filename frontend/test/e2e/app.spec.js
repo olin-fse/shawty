@@ -1,8 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const getConfig = require('../../config');
-const config = getConfig(process.env.NODE_ENV);
+const config = require('../../config')(process.env.NODE_ENV);
 
 describe('shawty', function() {
   beforeEach(function () {

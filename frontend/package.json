@@ -6,7 +6,6 @@
     "babel-preset-env": "1.6.0",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-2": "6.24.1",
-    "chai": "4.1.2",
     "express": "4.16.2",
     "path": "0.12.7",
     "react": "16.2.0",
@@ -22,6 +21,7 @@
     "e2e": "./node_modules/.bin/wdio wdio.conf.js"
   },
   "devDependencies": {
+    "chai": "4.1.2",
     "jest": "22.1.4",
     "wdio-chromedriver-service": "0.1.2",
     "wdio-jasmine-framework": "0.3.2",
