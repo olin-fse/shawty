@@ -13,6 +13,6 @@ export const generateCode = (url, singleUse, cb) => {
       if (err) return alert(err);
 
       const payload = JSON.parse(res.text);
-      cb(payload.Code);
+      cb(payload.code);
     });
 };
