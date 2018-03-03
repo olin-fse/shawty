@@ -3,6 +3,12 @@ language: go
 go:
   - "1.10"
 
+env:
+  - TEST_DB_USERNAME=url
+  - TEST_DB_PASSWORD=password
+  - TEST_DB_NAME=urlshortener
+  - TEST_DB_PORT=3306
+
 services:
   - mysql 
 
