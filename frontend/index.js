@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const port = process.env.PORT || 9001;
 const app = express();
-const getConfig = require('./config');
+const getConfig = require('./src/config');
 
 const config = getConfig(process.env.NODE_ENV);
 
