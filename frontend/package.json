@@ -27,6 +27,7 @@
     "e2e": "./node_modules/.bin/wdio wdio.conf.js"
   },
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "6.24.1",
     "chai": "4.1.2",
     "chai-webdriverio": "0.4.3",
     "jest": "22.1.4",

@@ -1,4 +1,4 @@
-const getConfig = (env) => {
+const getConfig = function(env) {
   if (env !== 'production') {
     return {
       apiEndpoint: 'http://localhost:8080',

@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
-  devtool: 'eval',
   entry: [
     path.join(__dirname, 'src/js/index.js')
   ],
@@ -50,7 +49,8 @@ module.exports = {
         include: path.join(__dirname, 'src/js/'),
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'env', 'stage-2']
+          presets: ['react', 'env'],
+          plugins: ['transform-class-properties']
         }
       },
       {
