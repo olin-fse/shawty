@@ -7,4 +7,4 @@ export DB_USERNAME=url
 export DB_PASSWORD=password
 export DB_NAME=urlshortener
 export DB_PORT=3306
-
+export DB_HOST=35.184.144.111
