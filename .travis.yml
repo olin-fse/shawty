@@ -11,6 +11,7 @@ env:
     - TEST_DB_PORT=3306
 
 services:
+<<<<<<< HEAD
   - mysql
 
 before_install:
