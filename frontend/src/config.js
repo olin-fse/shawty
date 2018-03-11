@@ -6,8 +6,8 @@ const getConfig = function(env) {
     };
   } else {
     return {
-      apiEndpoint: 'http://104.197.107.231:8080',
-      staticEndpoint: 'http://35.226.201.59:9001',
+      apiEndpoint: 'http://shwt.cf',
+      staticEndpoint: 'http://shawty.cf',
     }
   }
 
