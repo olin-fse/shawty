@@ -16,7 +16,7 @@ class App extends Component {
   }
 
   setUrl = (code) => {
-    this.setState({ shortenedUrl: `${config.staticEndpoint}/${code}` });
+    this.setState({ shortenedUrl: `${config.apiEndpoint}/${code}` });
   };
 
   render() {
